@@ -19,11 +19,11 @@ class Product with ChangeNotifier {
       @required this.imageUrl,
       this.isFavorite = false});
 
-  void toggleFavoriteStatus() {
+  void toggleFavoriteStatus(String token, String userId) {
     this.isFavorite = !this.isFavorite;
     final updateUrl = Uri.https("meal-app-e2e94-default-rtdb.firebaseio.com",
-        "/products/${this.id}.json");
-    http.patch(updateUrl, body: json.encode({'isFavorite': this.isFavorite}));
+        "/userFavorites/$userId/${this.id}.json", {'auth': token});
+    http.put(updateUrl, body: json.encode(this.isFavorite));
     notifyListeners();
   }
 }

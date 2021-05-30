@@ -10,12 +10,11 @@ class UserProductsScreen extends StatelessWidget {
 
   Future<void> _refreshProducts(BuildContext ctx) async {
     await Provider.of<ProductsProvider>(ctx, listen: false)
-        .fetchAndSetProducts();
+        .fetchAndSetProducts(filterByUser: true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final productsData = Provider.of<ProductsProvider>(context);
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
@@ -29,24 +28,33 @@ class UserProductsScreen extends StatelessWidget {
           )
         ],
       ),
-      body: RefreshIndicator(
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: ListView.builder(
-            itemBuilder: (_, index) => Column(
-              children: [
-                UserProductItem(
-                    productsData.items[index].title,
-                    productsData.items[index].imageUrl,
-                    productsData.items[index].id),
-                Divider()
-              ],
-            ),
-            itemCount: productsData.items.length,
-          ),
-        ),
-        onRefresh: () => _refreshProducts(context),
-      ),
+      body: FutureBuilder(
+          future: _refreshProducts(context),
+          builder: (ctx, snapshot) =>
+              snapshot.connectionState == ConnectionState.waiting
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : RefreshIndicator(
+                      child: Consumer<ProductsProvider>(
+                        builder: (context, productsData, _) => Padding(
+                          padding: EdgeInsets.all(8),
+                          child: ListView.builder(
+                            itemBuilder: (_, index) => Column(
+                              children: [
+                                UserProductItem(
+                                    productsData.items[index].title,
+                                    productsData.items[index].imageUrl,
+                                    productsData.items[index].id),
+                                Divider()
+                              ],
+                            ),
+                            itemCount: productsData.items.length,
+                          ),
+                        ),
+                      ),
+                      onRefresh: () => _refreshProducts(context),
+                    )),
     );
   }
 }

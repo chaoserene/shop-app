@@ -5,15 +5,19 @@ import 'package:shop_mart/providers/cart_provider.dart';
 import 'package:http/http.dart' as http;
 
 class OrdersProvider with ChangeNotifier {
-  List<OrderItem> _orders = [];
+  List<OrderItem> _orders;
+  String authToken;
+  String userId;
+
+  OrdersProvider(this.authToken, this._orders, this.userId);
 
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url =
-        Uri.https("meal-app-e2e94-default-rtdb.firebaseio.com", "orders.json");
+    final url = Uri.https("meal-app-e2e94-default-rtdb.firebaseio.com",
+        "orders/${this.userId}.json", {'auth': authToken});
 
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
@@ -41,8 +45,8 @@ class OrdersProvider with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    final url =
-        Uri.https("meal-app-e2e94-default-rtdb.firebaseio.com", "orders.json");
+    final url = Uri.https("meal-app-e2e94-default-rtdb.firebaseio.com",
+        "orders/${this.userId}.json", {'auth': authToken});
     final timestamp = DateTime.now();
 
     final response = await http.post(url,
