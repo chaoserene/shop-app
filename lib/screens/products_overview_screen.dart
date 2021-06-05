@@ -40,7 +40,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MyShop'),
+        title: Text('All products'),
         actions: [
           Consumer<CartProvider>(
             builder: (_, cartData, ch) => Badge(

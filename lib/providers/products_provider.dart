@@ -93,7 +93,7 @@ class ProductsProvider with ChangeNotifier {
             id: prodId,
             title: prodData['title'],
             description: prodData['description'],
-            price: prodData['price'],
+            price: double.parse(prodData['price'].toString()),
             imageUrl: prodData['imageUrl'],
             isFavorite:
                 favoriteData == null ? false : favoriteData[prodId] ?? false));
